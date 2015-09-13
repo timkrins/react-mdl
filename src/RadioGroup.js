@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import Radio from './Radio';
-import cloneChildren from './utils/cloneChildren';
 
 class RadioGroup extends React.Component {
     static propTypes = {
@@ -23,14 +22,22 @@ class RadioGroup extends React.Component {
     }
 
     render() {
+        var { name, onChange, value, children, ...otherProps} = this.props;
+
         return (
-            <div>
-                {cloneChildren(this.props.children, (child) => ({
-                    name: this.props.name,
-                    checked: child.props.value === this.props.value,
-                    onChange: this._handleChange
-                }))}
-            </div>
+            <ul {...otherProps}>
+                {React.Children.map(children, child => {
+                    return (
+                        <li>
+                            {React.cloneElement(child, {
+                                name: name,
+                                checked: child.props.value === value,
+                                onChange: this._handleChange
+                            })}
+                        </li>
+                    );
+                })}
+            </ul>
         );
     }
 }
